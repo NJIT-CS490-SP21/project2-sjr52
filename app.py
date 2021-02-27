@@ -3,6 +3,7 @@ from flask import Flask, send_from_directory, json, session
 from flask_socketio import SocketIO
 from flask_cors import CORS
 
+
 app = Flask(__name__, static_folder='./build/static')
 
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
@@ -19,15 +20,20 @@ socketio = SocketIO(
 def index(filename):
     return send_from_directory('./build', filename)
 
-# When a client connects from this Socket connection, this function is run
-@socketio.on('connect')
-def on_connect():
-    print('User connected!')
 
 # When a client disconnects from this Socket connection, this function is run
 @socketio.on('disconnect')
 def on_disconnect():
     print('User disconnected!')
+    
+
+# @socketio.on('assign_player')
+# def player_marker(assign_sybl): # data is whatever arg you pass in your emit call on client
+#     print(str(assign_sybl))
+#     # This emits the 'chat' event from the server to all clients except for
+#     # the client that emmitted the event that triggered this function
+#     socketio.emit('assign_player', assign_sybl, broadcast=True, include_self=False)
+
 
 # When a client emits the event 'chat' to the server, this function is run
 # 'chat' is a custom event name that we just decided

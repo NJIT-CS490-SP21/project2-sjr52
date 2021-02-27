@@ -16,11 +16,16 @@ export function Board(props){
     const [symbl, setSymbl] = useState("X");
     const [username, setUsername] = useState([]);
     const User_Input_Ref = useRef(null);
+    const [DisplayGame, setDisplayGame] = useState(true);
+    const [CurrPlayer, setPlayer] = useState([]);
+    const [IsLoggedIn, setIsLoggedIn] = useState(false);
+    
     
     
     function FormData() {
         
       if(User_Input_Ref != null){
+        setIsLoggedIn(prevIsLoggedIn => !prevIsLoggedIn)
         const Orig_User_Arr = Array(...username);
         Orig_User_Arr.push(User_Input_Ref.current.value);
         console.log(Orig_User_Arr);
@@ -58,8 +63,6 @@ export function Board(props){
             });
             
             setBoard(Store_Reciv_Data);
-            
-            
         });
     },[]);
     
@@ -71,15 +74,29 @@ export function Board(props){
     
     return(
         <div class="wrapper">
-            <div class="Input_Form">
-                <h1>Enter your Username:</h1>
-                <input type='text' ref={User_Input_Ref} />
-                <button type="submit" onClick={FormData}> Submit </button>
+            {IsLoggedIn ?  <div class = "board"> {Update_Board} </div> : <div class="Input_Form"> 
+                                                                         <h1>Enter your Username:</h1> 
+                                                                         <input type='text' ref={User_Input_Ref} />
+                                                                         <button type="Submit" onClick={FormData}> Submit </button>
+                                                                         </div>
+                
+            }
             </div>
-            <div class = "board">
-                {Update_Board}
-            </div>
-        </div>    
+            
+            
+            
+            
+            
+            // <div class="Input_Form">
+            //     <h1>Enter your Username:</h1>
+            //     <input type='text' ref={User_Input_Ref} />
+            //     <button type="Submit" onClick={FormData}> Submit </button>
+            // </div>
+            
+            
+            // <div class = "board">
+            //     {Update_Board}
+            // </div>
     )
 }
 
