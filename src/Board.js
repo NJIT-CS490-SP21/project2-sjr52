@@ -12,48 +12,55 @@ const socket = io();
 
 export function Board(props){
     
-    const [board, setBoard] = useState(Array(9).fill(null)); //array called board and function called setBoard to update the board array.
-    const [symbl, setSymbl] = useState("X");
-    const [username, setUsername] = useState([]);
-    const User_Input_Ref = useRef(null);
-    const [DisplayGame, setDisplayGame] = useState(true);
-    const [CurrPlayer, setPlayer] = useState([]);
-    const [IsLoggedIn, setIsLoggedIn] = useState(false);
-    
+    const [board, setBoard] = useState(Array(9).fill(null)); //Track Board Status
+    const [symbl, setSymbl] = useState("X"); //Track next Move Status
+    const [username, setUsername] = useState([]); //Track  Players Joined
+    const User_Input_Ref = useRef(null); //Take username as input
+    const [IsLoggedIn, setIsLoggedIn] = useState(false); //Check if User logged in or not
     
     
     function FormData() {
         
       if(User_Input_Ref != null){
-        setIsLoggedIn(prevIsLoggedIn => !prevIsLoggedIn)
-        const Orig_User_Arr = Array(...username);
-        Orig_User_Arr.push(User_Input_Ref.current.value);
-        console.log(Orig_User_Arr);
-        setUsername(Orig_User_Arr);
+        setIsLoggedIn(prevIsLoggedIn => !prevIsLoggedIn)  //Displaying game if user logged in
+        
+        let Curr_User = User_Input_Ref.current.value;     //Current username
+        username.push(Curr_User);                       //storing the user name in username array
+        socket.emit('User_List_Update', {User_Name: Curr_User}) //sending the user name in an object to server
+        console.log(username);           //printing out the entire username array
+          
       }
         
     }
     
-    function Listen_Click(idx){
-        const Update_Array = Array(...board);
+    function Listen_Click(idx){            //checking if the user clicked a box
+        const Update_Array = Array(...board);   // checking if the clicked index was empty
         if(Update_Array[idx] == null){
-            Update_Array[idx] = symbl;
-            setBoard(Update_Array);
-            if(symbl === "X"){
+            Update_Array[idx] = symbl;      //if it was empty then assiging the symbol
+            setBoard(Update_Array);         // updating the board
+            if(symbl === "X"){             // if the symbl was x change to o
                 setSymbl("O");
             }
-            else{
+            else{                           //else vice versa
                 setSymbl("X");
             }
         }
-        socket.emit('Board_Info', {Index: idx, Value: symbl}); 
+        socket.emit('Board_Info', {Index: idx, Value: symbl});   //sending the index and val of the marked box
     }
     
+    
     useEffect(() => {
-        socket.on('Board_Info', data => {
+        
+        socket.on('User_List_Update', (New_User)=> {
+            const Store_User_List = [...username]
+            Store_User_List.push(New_User.User_Name);
+            setUsername(Store_User_List)      //listening for new users and updating the username array
+        })
+        
+        socket.on('Board_Info', data => {   //listening for other player to make their move and updating the board
             console.log(data);
             
-            const Store_Reciv_Data  = prevBoard => prevBoard.map((board_val, board_idx) => {
+            const Store_Reciv_Data  = prevBoard => prevBoard.map((board_val, board_idx) => {    
                 if(board_idx == data.Index){
                     return data.Value;
                 }
@@ -82,21 +89,6 @@ export function Board(props){
                 
             }
             </div>
-            
-            
-            
-            
-            
-            // <div class="Input_Form">
-            //     <h1>Enter your Username:</h1>
-            //     <input type='text' ref={User_Input_Ref} />
-            //     <button type="Submit" onClick={FormData}> Submit </button>
-            // </div>
-            
-            
-            // <div class = "board">
-            //     {Update_Board}
-            // </div>
     )
 }
 
