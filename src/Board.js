@@ -4,6 +4,7 @@ import { Box_Comp } from './Square.js';
 import './Board.css';
 import { useState, useRef, useEffect } from 'react';
 import io from 'socket.io-client';
+import { User_Login } from './Login.js';
 // import socket from 'socket.io-client';
 
 
@@ -13,6 +14,20 @@ export function Board(props){
     
     const [board, setBoard] = useState(Array(9).fill(null)); //array called board and function called setBoard to update the board array.
     const [symbl, setSymbl] = useState("X");
+    const [username, setUsername] = useState([]);
+    const User_Input_Ref = useRef(null);
+    
+    
+    function FormData() {
+        
+      if(User_Input_Ref != null){
+        const Orig_User_Arr = Array(...username);
+        Orig_User_Arr.push(User_Input_Ref.current.value);
+        console.log(Orig_User_Arr);
+        setUsername(Orig_User_Arr);
+      }
+        
+    }
     
     function Listen_Click(idx){
         const Update_Array = Array(...board);
@@ -55,11 +70,16 @@ export function Board(props){
     }
     
     return(
-        
-        <div class = "board">
-            {Update_Board}
-        </div>
-            
+        <div class="wrapper">
+            <div class="Input_Form">
+                <h1>Enter your Username:</h1>
+                <input type='text' ref={User_Input_Ref} />
+                <button type="submit" onClick={FormData}> Submit </button>
+            </div>
+            <div class = "board">
+                {Update_Board}
+            </div>
+        </div>    
     )
 }
 

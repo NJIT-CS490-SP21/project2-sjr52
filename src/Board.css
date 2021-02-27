@@ -18,3 +18,14 @@
   
   
 }
+
+.Input_Form{
+  text-align:center;
+  margin: auto 0;
+  padding: 50px;
+}
+
+input{
+  width:200px;
+  height:50px;
+}
