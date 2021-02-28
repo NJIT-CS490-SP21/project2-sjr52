@@ -17,9 +17,9 @@ socketio = SocketIO(
 
 Player_X = ""
 Player_O = ""
+Spectators = ""
 Current_Players = []
 User_List_Size=0
-
 
 
 
@@ -30,20 +30,43 @@ def index(filename):
     return send_from_directory('./build', filename)
 
 
+
+
 @socketio.on('User_List_Update')
 def Update_User_List(data): 
     global User_List_Size
     global Current_Players
+    global Player_X
+    global Player_O
+    global Spectators
     
-    print("The Data Recieved is :" + str(data))
+    print("The Data Recieved is ================================================:" + str(data))
     User_List_Size+=1
     Current_Players.append(data['User_Name'])
-    socketio.emit('User_List_Update',  data, broadcast=True, include_self=False)
     
-    size=len(Current_Players)
-    for i in range(size):
-        print(Current_Players[i])
     
+    print("Current_Players list ================================================:" + str(Current_Players))
+    
+    
+    socketio.emit('User_List_Update',  Current_Players, broadcast=True, include_self=False)
+    
+    # Player_X = str(Current_Players[0])
+    # Player_O = str(Current_Players[1])
+    # Spectators = str(Current_Players[2:])
+    
+    # print("The Game Players are : X -> " + Player_X + " , O -> " + Player_O)
+    # print("The Spectators are :" + Spectators)
+    
+    
+
+# @socketio.on('Game_Players_Info')
+# def Game_Info(): # data is whatever arg you pass in your emit call on client
+#     data = [Player_X, Player_O, Spectators]
+#     socketio.emit('Game_Players_Info',  data, broadcast=True, include_self=False)
+
+
+
+
 
 
 @socketio.on('connect')
@@ -53,8 +76,16 @@ def on_connect():
 # When a client disconnects from this Socket connection, this function is run
 @socketio.on('disconnect')
 def on_disconnect():
+    Current_Players = [];
     print('User disconnected!')
     
+    
+@socketio.on('Curr_Symbl')
+def Curr_Symbl(Symbol): # data is whatever arg you pass in your emit call on client
+    print(str(Symbol))
+    # This emits the 'chat' event from the server to all clients except for
+    # the client that emmitted the event that triggered this function
+    socketio.emit('Curr_Symbl',  Symbol, broadcast=True, include_self=False)
 
 # When a client emits the event 'chat' to the server, this function is run
 # 'chat' is a custom event name that we just decided
@@ -91,7 +122,29 @@ socketio.run(
 
 
 
-
+# @socketio.on('User_List_Update')
+# def Update_User_List(data): 
+#     global User_List_Size
+#     global Current_Players
+#     global Player_X
+#     global Player_O
+    
+#     print("The Data Recieved is :" + str(data))
+#     User_List_Size+=1
+#     Current_Players.append(data['User_Name'])
+#     socketio.emit('User_List_Update',  data, broadcast=True, include_self=False)
+    
+#     Player_X = str(Current_Players[0])
+#     Player_O = str(Current_Players[1])
+    
+#     size=len(Current_Players)
+#     for i in range(size):
+#         if(i < 2):
+#             print("Players are: ")
+#             print(Current_Players[i])
+#         elif(i >= 2):
+#             print("Spectators are: ")
+#             print(Current_Players[i])
 
 
 
