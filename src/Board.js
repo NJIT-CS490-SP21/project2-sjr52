@@ -46,7 +46,7 @@ export function Board(props){
                 setSymbl("O");
                 socket.emit('Board_Info', {Index: idx, Value: symbl});   //sending the index and val of the marked box
                 socket.emit('Curr_Symbl', 'O');   //sending the index and val of the marked box
-                Check_Winner(Update_Array, username[0], "X");
+                //Check_Winner(Update_Array, username[0], "X");
             }
             if ( symbl === "O" && sessionStorage.getItem("LoggedInUser") === username[1] ){
                 Update_Array[idx] = symbl;      //if it was empty then assiging the symbol
@@ -54,14 +54,14 @@ export function Board(props){
                 setSymbl("X");
                 socket.emit('Board_Info', {Index: idx, Value: symbl});   //sending the index and val of the marked box
                 socket.emit('Curr_Symbl', 'X');   //sending the index and val of the marked box
-                Check_Winner(Update_Array, username[1], "O");
+                //Check_Winner(Update_Array, username[1], "O");
             }
             
         }
        }
     }
     
-    function Check_Winner(Win_Check_Arr, Win_Check_User, Win_Check_Mark){
+    function Check_Winner(Win_Check_Arr,Winner_Name_Arr){
         const Winning_Pattern = [
             [0, 1, 2,],
             [3, 4, 5,],
@@ -78,13 +78,41 @@ export function Board(props){
             let box_1 = winning_row[0]
             let box_2 = winning_row[1]
             let box_3 = winning_row[2]
-            if(Win_Check_Arr[box_1] === Win_Check_Mark && Win_Check_Arr[box_2] === Win_Check_Mark && Win_Check_Arr[box_3] === Win_Check_Mark){
-                alert(Win_Check_User + " You are the Winner!!!")
+
+            
+            if(Win_Check_Arr[box_1] == 'X' && Win_Check_Arr[box_2] == 'X' && Win_Check_Arr[box_3] == 'X'){
+                return alert("Player X : " + Winner_Name_Arr[0] + " is the Winner!!!");
+                //alert(Win_Check_User + " You are the Winner!!!")
             }
+            
+            else if(Win_Check_Arr[box_1] == 'O' && Win_Check_Arr[box_2] == 'O' && Win_Check_Arr[box_3] == 'O'){
+                return alert("Player O : " + Winner_Name_Arr[1] + " is the Winner!!!");
+                //alert(Win_Check_User + " You are the Winner!!!")
+            }
+            else{
+                continue;
+            }
+        
         }
+        return
     }
     
+    
+    function Create_NewGame(){
+        const Reset_Board=Array(9).fill(null);
+        const Reset_Symbl="X";
+        setBoard(Array(9).fill(null));
+        setSymbl("X");
+        socket.emit('Play_Again', {reset_Board: Reset_Board, reset_Symbl: Reset_Symbl});   //sending the index and val of the marked box
+    }
+    
+    
     useEffect(() => {
+        
+        socket.on('Play_Again', (Clean_Moves) => {
+            setBoard(Clean_Moves.reset_Board);
+            setSymbl(Clean_Moves.reset_Symbl);
+        });
         
         socket.on('Curr_Symbl', (symbol)=> {
             setSymbl(symbol);      //listening for new users and updating the username array
@@ -105,9 +133,11 @@ export function Board(props){
                    return board_val
                }
             });
-            
             setBoard(Store_Reciv_Data);
+        
         });
+        Check_Winner(board,username); 
+        
     },[]);
     
     
@@ -126,7 +156,6 @@ export function Board(props){
     }
     
     
-    
     return(
             <div className="wrapper">
                 {IsLoggedIn ?  <div class = "board"> 
@@ -134,6 +163,7 @@ export function Board(props){
                                     <p>Next move: {symbl}</p>
                                     {Playing_Players}
                                     {Spectator_Players}
+                                    <button type="reset" onClick={Create_NewGame}>Play Again!</button>
                                </div>                   
                                : 
                                <div className="Input_Form"> 
@@ -148,4 +178,18 @@ export function Board(props){
     );
 }
 
-export default Board;
+export default Board
+
+
+
+
+            // else if(IsWinner == false){
+            //         for (let i = 0; i < Win_Check_Arr.length; i++) {
+            //             if ((Win_Check_Arr[i] != null) && ((Win_Check_Arr[i] == "X") || (Win_Check_Arr[i] == "O"))) {
+            //                 alert(" It's a Draw!!!");
+            //             }
+            //             else{
+            //                 continue
+            //             }
+            //         }
+            //     }
