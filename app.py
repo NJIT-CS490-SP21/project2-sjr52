@@ -50,7 +50,9 @@ def on_connect():
 @socketio.on('disconnect')
 def on_disconnect():
     global Current_Players
-    Current_Players=[]
+    Current_Players.clear()
+    if(len(Current_Players)==0):
+        print("The Current_Players List IS Empty")
     print('User disconnected!')
     
     
