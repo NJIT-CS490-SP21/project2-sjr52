@@ -25,7 +25,21 @@
   padding: 50px;
 }
 
+h1{
+  background-color: gold;
+  width:600px;
+  position: relative;
+  left: 35%;
+}
+
 input{
   width:200px;
-  height:50px;
+  height:20px;
+}
+button{
+  margin:5px;
+  width: 75px;
+  height: 25px;
+  color: gold;
+  background-color: black;
 }

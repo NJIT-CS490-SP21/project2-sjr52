@@ -15,11 +15,8 @@ socketio = SocketIO(
     manage_session=False
 )
 
-Player_X = ""
-Player_O = ""
-Spectators = ""
 Current_Players = []
-User_List_Size=0
+
 
 
 
@@ -34,14 +31,10 @@ def index(filename):
 
 @socketio.on('User_List_Update')
 def Update_User_List(data): 
-    global User_List_Size
     global Current_Players
-    global Player_X
-    global Player_O
-    global Spectators
+
     
     print("The Data Recieved is ================================================:" + str(data))
-    User_List_Size+=1
     Current_Players.append(data['User_Name'])
     
     
@@ -50,24 +43,6 @@ def Update_User_List(data):
     
     socketio.emit('User_List_Update',  Current_Players, broadcast=True, include_self=False)
     
-    # Player_X = str(Current_Players[0])
-    # Player_O = str(Current_Players[1])
-    # Spectators = str(Current_Players[2:])
-    
-    # print("The Game Players are : X -> " + Player_X + " , O -> " + Player_O)
-    # print("The Spectators are :" + Spectators)
-    
-    
-
-# @socketio.on('Game_Players_Info')
-# def Game_Info(): # data is whatever arg you pass in your emit call on client
-#     data = [Player_X, Player_O, Spectators]
-#     socketio.emit('Game_Players_Info',  data, broadcast=True, include_self=False)
-
-
-
-
-
 
 @socketio.on('connect')
 def on_connect():
@@ -76,7 +51,7 @@ def on_connect():
 # When a client disconnects from this Socket connection, this function is run
 @socketio.on('disconnect')
 def on_disconnect():
-    Current_Players = [];
+    Current_Players.clear()
     print('User disconnected!')
     
     
