@@ -18,9 +18,6 @@ socketio = SocketIO(
 Current_Players = []
 
 
-
-
-
 @app.route('/', defaults={"filename": "index.html"})
 @app.route('/<path:filename>')
 def index(filename):
@@ -51,7 +48,8 @@ def on_connect():
 # When a client disconnects from this Socket connection, this function is run
 @socketio.on('disconnect')
 def on_disconnect():
-    Current_Players.clear()
+    global Current_Players
+    Current_Players=[]
     print('User disconnected!')
     
     
