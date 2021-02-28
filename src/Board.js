@@ -47,6 +47,7 @@ export function Board(props){
             if ( symbl === "O" && sessionStorage.getItem("LoggedInUser") === username[1] ){
                 Update_Array[idx] = symbl;      
                 setBoard(Update_Array);
+                setSymbl("X");
                 socket.emit('Board_Info', {Index: idx, Value: symbl});   
                 socket.emit('Curr_Symbl', 'X');   
 
@@ -115,11 +116,13 @@ export function Board(props){
     
     
     function Create_NewGame(){
-        const Reset_Board=Array(9).fill(null);
-        const Reset_Symbl="X";
-        setBoard(Array(9).fill(null));
-        setSymbl("X");
-        socket.emit('Play_Again', {reset_Board: Reset_Board, reset_Symbl: Reset_Symbl});   
+        if(sessionStorage.getItem("LoggedInUser") === username[1] || sessionStorage.getItem("LoggedInUser") === username[0]) {
+            const Reset_Board=Array(9).fill(null);
+            const Reset_Symbl="X";
+            setBoard(Array(9).fill(null));
+            setSymbl("X");
+            socket.emit('Play_Again', {reset_Board: Reset_Board, reset_Symbl: Reset_Symbl});
+        }
     }
     
     
