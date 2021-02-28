@@ -5,6 +5,7 @@ from flask_cors import CORS
 
 
 app = Flask(__name__, static_folder='./build/static')
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
 
