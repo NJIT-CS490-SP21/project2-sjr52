@@ -30,7 +30,6 @@ def index(filename):
 @socketio.on('User_List_Update')
 def Update_User_List(data): 
     global Current_Players
-
     
     print("The Data Recieved is ================================================:" + str(data))
     Current_Players.append(data['User_Name'])
@@ -51,8 +50,6 @@ def on_connect():
 def on_disconnect():
     global Current_Players
     Current_Players.clear()
-    if(len(Current_Players)==0):
-        print("The Current_Players List IS Empty")
     print('User disconnected!')
     
     

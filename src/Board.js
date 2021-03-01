@@ -143,7 +143,7 @@ export function Board(props){
         socket.on('User_List_Update', (New_User)=> {
             console.log(New_User);
             
-            setUsername(New_User);      
+            setUsername(PrevUser => [...New_User]);     //Changed Here  
         });
         
         socket.on('Board_Info', (data) => {  
