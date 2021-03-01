@@ -141,10 +141,12 @@ export function Board(props){
         });
         
         socket.on('User_List_Update', (New_User)=> {
+            console.log(New_User);
+            
             setUsername(New_User);      
         });
         
-        socket.on('Board_Info', data => {  
+        socket.on('Board_Info', (data) => {  
             console.log(data);
             
             const Store_Reciv_Data  = board => board.map((board_val, board_idx) => {    
