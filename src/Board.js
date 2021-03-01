@@ -23,7 +23,9 @@ export function Board(props){
         console.log(username);
         let Curr_User = User_Input_Ref.current.value;     
                     sessionStorage.setItem('LoggedInUser', Curr_User);
-        username.push(Curr_User);                       
+        //username.push(Curr_User); 
+        //const templist = [...username];
+        setUsername((prev_user) => [...prev_user, Curr_User]);
         socket.emit('User_List_Update', {User_Name: Curr_User}) 
         console.log(username);           
           
