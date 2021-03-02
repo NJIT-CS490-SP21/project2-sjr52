@@ -15,6 +15,7 @@ export function Board(props){
     const [username, setUsername] = useState([]); 
     const User_Input_Ref = useRef(null); 
     const [IsLoggedIn, setIsLoggedIn] = useState(false); 
+    const [IsLeaderBoard, setIsLeaderBoard] = useState(false); 
     
     function FormData() {
         
@@ -23,11 +24,10 @@ export function Board(props){
         console.log(username);
         let Curr_User = User_Input_Ref.current.value;     
                     sessionStorage.setItem('LoggedInUser', Curr_User);
-        //username.push(Curr_User); 
-        //const templist = [...username];
         setUsername((prev_user) => [...prev_user, Curr_User]);
         socket.emit('User_List_Update', {User_Name: Curr_User}) 
-        console.log(username);           
+        console.log(username); 
+        
           
       }
         
@@ -59,6 +59,18 @@ export function Board(props){
        }
 
     }
+    
+    function Leader_Board(){
+    //   User_DB_Check is a list of users that have joined
+    
+
+        setIsLeaderBoard((prevLeaderBoard) => !prevLeaderBoard);
+    }
+    
+    
+    
+    
+    
     
     function Check_Winner(Win_Check_Arr,Winner_Name_Arr){
         const Winning_Pattern = [
@@ -187,6 +199,17 @@ export function Board(props){
         
     }
     
+    // //Table to display leader board
+    
+    const Leader_Board_Arr = Array();
+    // Leader_Board_Arr.push("<table>")
+    // Leader_Board_Arr.push(<tr><th>UserName</th><th>Ranking Score</th></tr>)
+    
+    for (let val = 0; val < username.length; val++){
+        Leader_Board_Arr.push(<tr><td> {username[val]} </td><td> 100 </td></tr>)
+    }
+    
+    
     
     return(
             <div className="wrapper">
@@ -196,7 +219,8 @@ export function Board(props){
                                         {Update_Board} 
                                         <p>Turn Next : {symbl}</p>
                                         {Check_Winner(board,username)}
-                                        <button type="reset" onClick={Create_NewGame} id="replay">Play Again!</button>
+                                        <button  className="btn" type="reset" onClick={Create_NewGame} id="replay">Play Again!</button>
+                                        <button  className="btn" onClick={Leader_Board} id="LB_Btn">Leader Board</button>
                                     </div>
                                     <div id="Playing">
                                         <h2>Currently Playing:</h2>
@@ -206,6 +230,24 @@ export function Board(props){
                                         <h2>Currently Watching:</h2>
                                         {Spectator_Players}
                                     </div>
+                                    {IsLeaderBoard ? 
+                                        <div id="Table_Wrapper">
+                                            <table> 
+                                                <caption>Leader Board</caption>
+                                                <thead>
+                                                    <tr>
+                                                        <th>UserName</th>
+                                                        <th>Ranking Score</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {Leader_Board_Arr}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        : 
+                                        null
+                                    }
                                </div>                   
                                : 
                                <div className="Input_Form"> 
@@ -216,9 +258,9 @@ export function Board(props){
                                 </div>
                 
                 }
+                
             </div>
     );
 }
 
 export default Board
-
