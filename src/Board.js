@@ -16,6 +16,18 @@ export function Board(props){
     const User_Input_Ref = useRef(null); 
     const [IsLoggedIn, setIsLoggedIn] = useState(false); 
     const [IsLeaderBoard, setIsLeaderBoard] = useState(false); 
+    const [Orig_User, SetOrig_User] = useState([]);
+    const [Orig_Score, SetOrig_Score] = useState([]);
+    const [IsWinner, setWinner] = useState(false);
+    
+    
+    
+     React.useEffect(() => {
+        Check_Winner(board,username)
+     }, [board]);
+    
+    
+    //{Check_Winner(board,username)}
     
     function FormData() {
         
@@ -26,9 +38,9 @@ export function Board(props){
                     sessionStorage.setItem('LoggedInUser', Curr_User);
         setUsername((prev_user) => [...prev_user, Curr_User]);
         socket.emit('User_List_Update', {User_Name: Curr_User}) 
+        socket.emit('DB_UserCheck', Curr_User)
         console.log(username); 
         
-          
       }
         
     }
@@ -61,10 +73,8 @@ export function Board(props){
     }
     
     function Leader_Board(){
-    //   User_DB_Check is a list of users that have joined
-    
-
         setIsLeaderBoard((prevLeaderBoard) => !prevLeaderBoard);
+        
     }
     
     
@@ -95,11 +105,27 @@ export function Board(props){
             if(Win_Check_Arr[box_1] == 'X' && Win_Check_Arr[box_2] == 'X' && Win_Check_Arr[box_3] == 'X'){
                 
                 setTimeout(function(){ alert("Player X : " + Winner_Name_Arr[0] + " is the Winner!!!"); }, 100);
+         
+                
+                if(sessionStorage.getItem("LoggedInUser") === username[0] && !IsWinner) {
+                    setWinner(true);
+                    console.log("Winner is: " + Winner_Name_Arr[0] + " Loser is: " + Winner_Name_Arr[1]);
+                    socket.emit('Game_Result_Winner', {"Winner": Winner_Name_Arr[0], "Loser": Winner_Name_Arr[1]});
+                }
+                
                 isDraw=false;
             }
             
             else if(Win_Check_Arr[box_1] == 'O' && Win_Check_Arr[box_2] == 'O' && Win_Check_Arr[box_3] == 'O'){
+                
                 setTimeout(function(){ alert("Player O : " + Winner_Name_Arr[1] + " is the Winner!!!"); }, 100);
+                
+                if(sessionStorage.getItem("LoggedInUser") === username[1] && !IsWinner) {
+                    setWinner(true);
+                    console.log("Winner is: " + Winner_Name_Arr[1] + "Loser is: " + Winner_Name_Arr[0]);
+                    socket.emit('Game_Result_Winner', {"Winner": Winner_Name_Arr[1], "Loser": Winner_Name_Arr[0]});
+                }
+                
                 isDraw=false;
             }
             else{
@@ -115,13 +141,21 @@ export function Board(props){
             for (let i = 0; i < Win_Check_Arr.length; i++) {
 
                 if ((Win_Check_Arr[i] === null)) {
-                    Game_Over =false;
+                    Game_Over = false;
                     break;
                 }
             }
             
             if(Game_Over){
-                setTimeout(function(){ alert(" It's a Draw!!!"); }, 1000);
+                setTimeout(function(){ alert(" It's a Draw!!!"); }, 100);
+                //console.log("The Game is: Draw");
+                
+                if(sessionStorage.getItem("LoggedInUser") === username[0]) {
+                    console.log("The Game is: Draw");
+                }
+                    
+                //     socket.emit('Game_Result_Draw', {"Draw": "Draw"});
+                // }
             }
         }
         
@@ -155,8 +189,19 @@ export function Board(props){
         socket.on('User_List_Update', (New_User)=> {
             console.log(New_User);
             
-            setUsername(PrevUser => [...New_User]);     //Changed Here  
+            setUsername(prevUser =>  [...New_User]);     //Changed Here  
         });
+        
+                
+        socket.on('Old_DB_Users', (Initial_User_DB)=> {
+            SetOrig_User(prevOrig_User => prevOrig_User = Initial_User_DB)
+        });
+        
+        socket.on('Old_DB_Scores', (Initial_Score_DB)=> {
+            SetOrig_Score(prevOrig_Score => prevOrig_Score = Initial_Score_DB)
+        });
+        
+    
         
         socket.on('Board_Info', (data) => {  
             console.log(data);
@@ -175,6 +220,9 @@ export function Board(props){
         
     },[]);
     
+    
+    console.log("Orig-User[0]: " + Orig_User[0]);
+    console.log("Orig-Score[0]: " + Orig_Score[0]);
     
     const Update_Board = Array(9).fill(null);
     for (let i = 0; i < 9; i++){
@@ -199,16 +247,24 @@ export function Board(props){
         
     }
     
-    // //Table to display leader board
+    
     
     const Leader_Board_Arr = Array();
-    // Leader_Board_Arr.push("<table>")
-    // Leader_Board_Arr.push(<tr><th>UserName</th><th>Ranking Score</th></tr>)
+    for (let val = 0; val < Orig_User.length; val++){
+        
+        if(sessionStorage.getItem("LoggedInUser") == Orig_User[val]){
+            
+            Leader_Board_Arr.push(<tr id="Curr_User_Data"><td> {Orig_User[val]} </td><td> {Orig_Score[val]} </td></tr>)
+        }
+        
+        else{
+        
+         Leader_Board_Arr.push(<tr><td> {Orig_User[val]} </td><td> {Orig_Score[val]} </td></tr>)
     
-    for (let val = 0; val < username.length; val++){
-        Leader_Board_Arr.push(<tr><td> {username[val]} </td><td> 100 </td></tr>)
+        }    
     }
     
+   // {Check_Winner(board,username)}
     
     
     return(
@@ -218,7 +274,7 @@ export function Board(props){
                                     <div className = "board">   
                                         {Update_Board} 
                                         <p>Turn Next : {symbl}</p>
-                                        {Check_Winner(board,username)}
+                                        
                                         <button  className="btn" type="reset" onClick={Create_NewGame} id="replay">Play Again!</button>
                                         <button  className="btn" onClick={Leader_Board} id="LB_Btn">Leader Board</button>
                                     </div>

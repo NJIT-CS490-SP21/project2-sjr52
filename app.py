@@ -24,8 +24,6 @@ if __name__ == '__main__':
     db.create_all()
 
 
-
-
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
 
 socketio = SocketIO(
@@ -62,7 +60,8 @@ def on_connect():
     for user_name in old_users_list:
         old_user_names[user_name.username]=user_name.score
     print(old_user_names)
-    #socketio.emit('Starting_Database', {"User_Name": OG_DB_Users})
+    
+
 
 # When a client disconnects from this Socket connection, this function is run
 @socketio.on('disconnect')
@@ -78,7 +77,53 @@ def Curr_Symbl(Symbol): # data is whatever arg you pass in your emit call on cli
     # This emits the 'chat' event from the server to all clients except for
     # the client that emmitted the event that triggered this function
     socketio.emit('Curr_Symbl', Symbol, broadcast=True, include_self=False)
+    
+    
+@socketio.on('DB_UserCheck')
+def User_DB_Check(Check_UserName):
+    Joined_User = Check_UserName
+    UserInDB = False
+    print(str("================The Data recieved from user joined is: " + Joined_User))
+    
+    Check_UserinDB = models.Person.query.all()
+    for user_names in Check_UserinDB:
+        if(Check_UserName == user_names.username):
+            UserInDB = True
+        else:
+            continue
+    
+    if(UserInDB == False):
+        Store_New_User = models.Person(username=Joined_User,score = 100)
+        db.session.add(Store_New_User)
+        db.session.commit()
+        
+        
+    Initial_User_DB = []
+    Initial_Score_DB = []
 
+    Added_New_User = models.Person.query.all()
+    for Updated_DB_Users in Added_New_User:
+        print(Updated_DB_Users.username + " => " + str(Updated_DB_Users.score))
+        Initial_User_DB.append(Updated_DB_Users.username)
+        Initial_Score_DB.append(Updated_DB_Users.score)
+        
+    
+    socketio.emit('Old_DB_Users', Initial_User_DB)
+    socketio.emit('Old_DB_Scores', Initial_Score_DB)
+    
+    
+
+@socketio.on('Game_Result_Winner')
+def Game_Result_Winner(data): 
+    print(str("The Result of the game is: Winner:  " + data["Winner"] + ", Loser: " + data["Loser"]))
+    
+    
+@socketio.on('Game_Result_Draw')
+def Game_Result_Draw(data): 
+    print(str("The Result of the game is: " + data["Draw"]))
+
+    
+    
 # When a client emits the event 'chat' to the server, this function is run
 # 'chat' is a custom event name that we just decided
 @socketio.on('Board_Info')
