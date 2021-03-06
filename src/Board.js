@@ -201,7 +201,16 @@ export function Board(props){
             SetOrig_Score(prevOrig_Score => prevOrig_Score = Initial_Score_DB)
         });
         
-    
+        
+        socket.on('Updated_DB_Users', (Updated_User_DB)=> {
+            SetOrig_User(prevOrig_User => prevOrig_User = Updated_User_DB)
+        });
+        
+        socket.on('Updated_DB_Scores', (Updated_Score_DB)=> {
+            SetOrig_Score(prevOrig_Score => prevOrig_Score = Updated_Score_DB)
+        });
+        
+        
         
         socket.on('Board_Info', (data) => {  
             console.log(data);
@@ -221,8 +230,6 @@ export function Board(props){
     },[]);
     
     
-    console.log("Orig-User[0]: " + Orig_User[0]);
-    console.log("Orig-Score[0]: " + Orig_Score[0]);
     
     const Update_Board = Array(9).fill(null);
     for (let i = 0; i < 9; i++){
@@ -263,8 +270,6 @@ export function Board(props){
     
         }    
     }
-    
-   // {Check_Winner(board,username)}
     
     
     return(

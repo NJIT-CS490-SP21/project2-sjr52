@@ -116,12 +116,30 @@ def User_DB_Check(Check_UserName):
 @socketio.on('Game_Result_Winner')
 def Game_Result_Winner(data): 
     print(str("The Result of the game is: Winner:  " + data["Winner"] + ", Loser: " + data["Loser"]))
+    Winner_Name = data["Winner"]
+    Loser_Name = data["Loser"]
+        
+    Update_Winner_score = db.session.query(models.Person).filter_by(username=Winner_Name).first()
+    Update_Loser_score =  db.session.query(models.Person).filter_by(username=Loser_Name).first()
     
+    Update_Winner_score.score +=1
+    Update_Loser_score.score -=1
     
-@socketio.on('Game_Result_Draw')
-def Game_Result_Draw(data): 
-    print(str("The Result of the game is: " + data["Draw"]))
+    db.session.commit()
+    
+    Updated_User_DB = []
+    Updated_Score_DB = []
 
+    All_People = models.Person.query.all()
+    print("*****************************************************")
+    for People in All_People:
+        print(People.username + " => " + str(People.score))
+        Updated_User_DB.append(People.username)
+        Updated_Score_DB.append(People.score)
+    print("*****************************************************")
+        
+    socketio.emit('Updated_DB_Users', Updated_User_DB)
+    socketio.emit('Updated_DB_Scores', Updated_Score_DB)
     
     
 # When a client emits the event 'chat' to the server, this function is run
