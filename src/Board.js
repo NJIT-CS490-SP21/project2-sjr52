@@ -100,10 +100,6 @@ export function Board(props){
             if(Win_Check_Arr[box_1] == 'X' && Win_Check_Arr[box_2] == 'X' && Win_Check_Arr[box_3] == 'X'){
                 
                 document.getElementById("Display_Winner").innerHTML = "Winner: " + Winner_Name_Arr[0] + "!!!";
-                // setTimeout(function(){
-                //      document.getElementById("Display_Winner").innerHTML = "";
-                // }, 100000);
-         
                 
                 if(sessionStorage.getItem("LoggedInUser") === username[0] && !IsWinner) {
                     setWinner(true);
@@ -118,10 +114,6 @@ export function Board(props){
             else if(Win_Check_Arr[box_1] == 'O' && Win_Check_Arr[box_2] == 'O' && Win_Check_Arr[box_3] == 'O'){
             
                 document.getElementById("Display_Winner").innerHTML = "Winner: " + Winner_Name_Arr[1] + "!!!";
-                // setTimeout(function(){
-                //      document.getElementById("Display_Winner").innerHTML = "";
-                // }, 10000);
-                
                 
                 if(sessionStorage.getItem("LoggedInUser") === username[1] && !IsWinner) {
                     setWinner(true);
