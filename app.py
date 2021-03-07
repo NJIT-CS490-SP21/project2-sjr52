@@ -159,6 +159,10 @@ def Create_NewGame(data): # data is whatever arg you pass in your emit call on c
     # the client that emmitted the event that triggered this function
     socketio.emit('Play_Again', data, broadcast=True, include_self=False)
     
+@socketio.on("Game_Over")
+def Game_Over(data):
+    print(str(data["Game_Over"]))
+    socketio.emit('Game_Over', data, broadcast=True, include_self=False)
     
 if __name__ == "__main__":
 # Note that we don't call app.run anymore. We call socketio.run with app arg

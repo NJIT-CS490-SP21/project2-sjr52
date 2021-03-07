@@ -246,3 +246,15 @@ tbody tr td{
   object-fit: cover;
   position: fixed;
 }
+
+#Display_Winner{
+  font-size:20px;
+  position: absolute;
+  width:250px;
+  top:5%;
+  left:42%;
+  z-index:3;
+  background-color:black;
+  text-decoration:none;
+  text-align:center;
+}

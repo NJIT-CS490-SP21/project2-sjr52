@@ -19,6 +19,7 @@ export function Board(props){
     const [Orig_User, SetOrig_User] = useState([]);
     const [Orig_Score, SetOrig_Score] = useState([]);
     const [IsWinner, setWinner] = useState(false);
+    const [IsGameOver, setIsGameOver] = useState(false);
     
     
     
@@ -26,8 +27,6 @@ export function Board(props){
         Check_Winner(board,username)
      }, [board]);
     
-    
-    //{Check_Winner(board,username)}
     
     function FormData() {
         
@@ -49,7 +48,7 @@ export function Board(props){
        console.log(username, idx);
        if(sessionStorage.getItem("LoggedInUser") === username[1] || sessionStorage.getItem("LoggedInUser") === username[0]) {
         const Update_Array = Array(...board);   
-        if(Update_Array[idx] == null){
+        if(Update_Array[idx] == null && !IsGameOver){
             if(symbl === "X" && sessionStorage.getItem("LoggedInUser") === username[0]){
                 Update_Array[idx] = symbl;      
                 setBoard(Update_Array);
@@ -78,10 +77,6 @@ export function Board(props){
     }
     
     
-    
-    
-    
-    
     function Check_Winner(Win_Check_Arr,Winner_Name_Arr){
         const Winning_Pattern = [
             [0, 1, 2,],
@@ -104,26 +99,35 @@ export function Board(props){
             
             if(Win_Check_Arr[box_1] == 'X' && Win_Check_Arr[box_2] == 'X' && Win_Check_Arr[box_3] == 'X'){
                 
-                setTimeout(function(){ alert("Player X : " + Winner_Name_Arr[0] + " is the Winner!!!"); }, 100);
+                document.getElementById("Display_Winner").innerHTML = "Winner: " + Winner_Name_Arr[0] + "!!!";
+                // setTimeout(function(){
+                //      document.getElementById("Display_Winner").innerHTML = "";
+                // }, 100000);
          
                 
                 if(sessionStorage.getItem("LoggedInUser") === username[0] && !IsWinner) {
                     setWinner(true);
                     console.log("Winner is: " + Winner_Name_Arr[0] + " Loser is: " + Winner_Name_Arr[1]);
                     socket.emit('Game_Result_Winner', {"Winner": Winner_Name_Arr[0], "Loser": Winner_Name_Arr[1]});
+                    socket.emit("Game_Over", {"Game_Over": true});
                 }
                 
                 isDraw=false;
             }
             
             else if(Win_Check_Arr[box_1] == 'O' && Win_Check_Arr[box_2] == 'O' && Win_Check_Arr[box_3] == 'O'){
+            
+                document.getElementById("Display_Winner").innerHTML = "Winner: " + Winner_Name_Arr[1] + "!!!";
+                // setTimeout(function(){
+                //      document.getElementById("Display_Winner").innerHTML = "";
+                // }, 10000);
                 
-                setTimeout(function(){ alert("Player O : " + Winner_Name_Arr[1] + " is the Winner!!!"); }, 100);
                 
                 if(sessionStorage.getItem("LoggedInUser") === username[1] && !IsWinner) {
                     setWinner(true);
                     console.log("Winner is: " + Winner_Name_Arr[1] + "Loser is: " + Winner_Name_Arr[0]);
                     socket.emit('Game_Result_Winner', {"Winner": Winner_Name_Arr[1], "Loser": Winner_Name_Arr[0]});
+                    socket.emit("Game_Over", {"Game_Over": true});
                 }
                 
                 isDraw=false;
@@ -147,15 +151,16 @@ export function Board(props){
             }
             
             if(Game_Over){
-                setTimeout(function(){ alert(" It's a Draw!!!"); }, 100);
-                //console.log("The Game is: Draw");
+                document.getElementById("Display_Winner").innerHTML = "Game Result: DRAW!!!";
+                // setTimeout(function(){
+                //     document.getElementById("Display_Winner").innerHTML = "";
+                // }, 15000);
+                
                 
                 if(sessionStorage.getItem("LoggedInUser") === username[0]) {
                     console.log("The Game is: Draw");
                 }
                     
-                //     socket.emit('Game_Result_Draw', {"Draw": "Draw"});
-                // }
             }
         }
         
@@ -169,7 +174,9 @@ export function Board(props){
             const Reset_Symbl="X";
             setBoard(Array(9).fill(null));
             setSymbl("X");
+            setIsGameOver(false);
             socket.emit('Play_Again', {reset_Board: Reset_Board, reset_Symbl: Reset_Symbl});
+            document.getElementById("Display_Winner").innerHTML = "";
         }
     }
     
@@ -179,6 +186,8 @@ export function Board(props){
         socket.on('Play_Again', (Clean_Moves) => {
             setBoard(Clean_Moves.reset_Board);
             setSymbl(Clean_Moves.reset_Symbl);
+            document.getElementById("Display_Winner").innerHTML = "";
+            
         });
         
         socket.on('Curr_Symbl', (symbol)=> {
@@ -208,6 +217,10 @@ export function Board(props){
         
         socket.on('Updated_DB_Scores', (Updated_Score_DB)=> {
             SetOrig_Score(prevOrig_Score => prevOrig_Score = Updated_Score_DB)
+        });
+        
+        socket.on('Game_Over', (Game_Over)=> {
+            setIsGameOver(Game_Over["Game_Over"]);
         });
         
         
@@ -278,6 +291,7 @@ export function Board(props){
                 {IsLoggedIn ?  <div id="Main_Board">
                                     <h1 id="Game_Name">Tic Tac Toe Game!</h1>
                                     <img id ="BG_IMG_Board" src="https://res.cloudinary.com/ddsomtotk/image/upload/v1615102367/Game_Pic_mxugms.jpg" alt="Background_Image"/>
+                                    <h2  id="Display_Winner"></h2>
                                     <div className = "board">   
                                         {Update_Board} 
                                         <p>Next Turn : {symbl}</p>
