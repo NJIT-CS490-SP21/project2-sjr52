@@ -101,7 +101,7 @@ def User_DB_Check(Check_UserName):
     Initial_User_DB = []
     Initial_Score_DB = []
 
-    Added_New_User = models.Person.query.all()
+    Added_New_User = db.session.query(models.Person).order_by(models.Person.score.desc()).all()
     for Updated_DB_Users in Added_New_User:
         print(Updated_DB_Users.username + " => " + str(Updated_DB_Users.score))
         Initial_User_DB.append(Updated_DB_Users.username)
@@ -130,7 +130,8 @@ def Game_Result_Winner(data):
     Updated_User_DB = []
     Updated_Score_DB = []
 
-    All_People = models.Person.query.all()
+    # All_People = models.Person.query.all()
+    All_People = db.session.query(models.Person).order_by(models.Person.score.desc()).all()
     print("*****************************************************")
     for People in All_People:
         print(People.username + " => " + str(People.score))
