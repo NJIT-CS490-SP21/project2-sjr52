@@ -230,6 +230,7 @@ export function Board(props){
     },[]);
     
     
+
     
     const Update_Board = Array(9).fill(null);
     for (let i = 0; i < 9; i++){
@@ -276,9 +277,10 @@ export function Board(props){
             <div className="wrapper">
                 {IsLoggedIn ?  <div id="Main_Board">
                                     <h1 id="Game_Name">Tic Tac Toe Game!</h1>
+                                    <img id ="BG_IMG_Board" src="https://res.cloudinary.com/ddsomtotk/image/upload/v1615102367/Game_Pic_mxugms.jpg" alt="Background_Image"/>
                                     <div className = "board">   
                                         {Update_Board} 
-                                        <p>Turn Next : {symbl}</p>
+                                        <p>Next Turn : {symbl}</p>
                                         
                                         <button  className="btn" type="reset" onClick={Create_NewGame} id="replay">Play Again!</button>
                                         <button  className="btn" onClick={Leader_Board} id="LB_Btn">Leader Board</button>
@@ -311,11 +313,14 @@ export function Board(props){
                                     }
                                </div>                   
                                : 
-                               <div className="Input_Form"> 
-                                    <h1 id="Form_Header1"><u>User Log-In Form</u></h1> 
-                                    <h3 id="Form_Header3">Enter your Username:</h3> 
-                                    <input id="Form_Input" type='text' ref={User_Input_Ref} />
-                                    <button id="Form_Btn" type="Submit" onClick={FormData}> Submit </button>
+                               <div>
+                                    <img id ="BG_IMG_Form" src="https://res.cloudinary.com/ddsomtotk/image/upload/v1615102276/Pro2_Pic2_tbwb1l.webp" alt="Background_Image"/>
+                                    <div className="Input_Form"> 
+                                        <h1 id="Form_Header1"><u>User Log-In Form</u></h1> 
+                                        <h3 id="Form_Header3">Enter your Username:</h3> 
+                                        <input id="Form_Input" type='text' ref={User_Input_Ref} />
+                                        <button id="Form_Btn" type="Submit" onClick={FormData}> Submit </button>
+                                    </div>
                                 </div>
                 
                 }
