@@ -100,6 +100,7 @@ export function Board(props){
             if(Win_Check_Arr[box_1] == 'X' && Win_Check_Arr[box_2] == 'X' && Win_Check_Arr[box_3] == 'X'){
                 
                 document.getElementById("Display_Winner").innerHTML = "Winner: " + Winner_Name_Arr[0] + "!!!";
+         
                 
                 if(sessionStorage.getItem("LoggedInUser") === username[0] && !IsWinner) {
                     setWinner(true);
@@ -144,10 +145,6 @@ export function Board(props){
             
             if(Game_Over){
                 document.getElementById("Display_Winner").innerHTML = "Game Result: DRAW!!!";
-                // setTimeout(function(){
-                //     document.getElementById("Display_Winner").innerHTML = "";
-                // }, 15000);
-                
                 
                 if(sessionStorage.getItem("LoggedInUser") === username[0]) {
                     console.log("The Game is: Draw");
@@ -168,7 +165,7 @@ export function Board(props){
             setSymbl("X");
             setIsGameOver(false);
             socket.emit('Play_Again', {reset_Board: Reset_Board, reset_Symbl: Reset_Symbl});
-            document.getElementById("Display_Winner").innerHTML = "";
+            document.getElementById("Display_Winner").innerHTML = "In Progress";
         }
     }
     
@@ -178,7 +175,7 @@ export function Board(props){
         socket.on('Play_Again', (Clean_Moves) => {
             setBoard(Clean_Moves.reset_Board);
             setSymbl(Clean_Moves.reset_Symbl);
-            document.getElementById("Display_Winner").innerHTML = "";
+            document.getElementById("Display_Winner").innerHTML = "In Progress";
             
         });
         
