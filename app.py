@@ -1,61 +1,65 @@
+# pylint: disable= E1101, C0413, R0903, W0603, W1508
+
+
+
 '''This file is a server that helps with the communication between multiple users and database'''
 import os
 from dotenv import load_dotenv, find_dotenv
-from flask import Flask, send_from_directory, json, session
+from flask import Flask, send_from_directory, json, session # pylint: disable=unused-import
 from flask_socketio import SocketIO
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 
 load_dotenv(find_dotenv())
 
-app = Flask(__name__, static_folder='./build/static')
+APP = Flask(__name__, static_folder='./build/static')
 
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
+APP.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+APP.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-db = SQLAlchemy(app)
+DB = SQLAlchemy(APP)
 
 # import models
 import models
 if __name__ == '__main__':
-    db.create_all()
+    DB.create_all()
 
-cors = CORS(app, resources={r"/*": {"origins": "*"}})
+CORS = CORS(APP, resources={r"/*": {"origins": "*"}})
 
-socketio = SocketIO(app,
+SOCKETIO = SocketIO(APP,
                     cors_allowed_origins="*",
                     json=json,
                     manage_session=False)
 
-Current_Players = []
+CURRENT_PLAYERS = []
 
 
-@app.route('/', defaults={"filename": "index.html"})
-@app.route('/<path:filename>')
+@APP.route('/', defaults={"filename": "index.html"})
+@APP.route('/<path:filename>')
 def index(filename):
     '''This function just builds the file'''
     return send_from_directory('./build', filename)
 
 
-@socketio.on('User_List_Update')
-def Update_User_List(data):
+@SOCKETIO.on('User_List_Update')
+def update_user_list(data):
     '''This function updates the user list based on players that join'''
-    global Current_Players
+    global CURRENT_PLAYERS
     print(
         "The Data Recieved is ================================================:"
         + str(data))
-    Current_Players.append(data['User_Name'])
+    CURRENT_PLAYERS.append(data['User_Name'])
     print(
-        "Current_Players list ================================================:"
-        + str(Current_Players))
-    socketio.emit('User_List_Update',
-                  Current_Players,
+        "CURRENT_PLAYERS list ================================================:"
+        + str(CURRENT_PLAYERS))
+    SOCKETIO.emit('User_List_Update',
+                  CURRENT_PLAYERS,
                   broadcast=True,
                   include_self=False)
 
 
-@socketio.on('connect')
+@SOCKETIO.on('connect')
 def on_connect():
     '''This function just gets the pre-stored list of users from database'''
     print('User connected!')
@@ -68,126 +72,127 @@ def on_connect():
 
 
 # When a client disconnects from this Socket connection, this function is run
-@socketio.on('disconnect')
+@SOCKETIO.on('disconnect')
 def on_disconnect():
     '''This function clears the joined players list on disconnect'''
-    global Current_Players
-    Current_Players.clear()
+    global CURRENT_PLAYERS
+    CURRENT_PLAYERS.clear()
     print('User disconnected!')
 
 
-@socketio.on('Curr_Symbl')
-def Curr_Symbl(Symbol):  # data is whatever arg you pass in your emit call on client
+@SOCKETIO.on('Curr_Symbl')
+def curr_symbl(
+        symbol):  # data is whatever arg you pass in your emit call on client
     '''This function sends the current symbol to all users'''
-    print(str(Symbol))
+    print(str(symbol))
     # This emits the 'chat' event from the server to all clients except for
     # the client that emmitted the event that triggered this function
-    socketio.emit('Curr_Symbl', Symbol, broadcast=True, include_self=False)
+    SOCKETIO.emit('Curr_Symbl', symbol, broadcast=True, include_self=False)
 
 
-@socketio.on('DB_UserCheck')
-def User_DB_Check(Check_UserName):
+@SOCKETIO.on('DB_UserCheck')
+def user_db_check(check_username):
     '''This function u'''
-    Joined_User = Check_UserName
-    UserInDB = False
+    joined_user = check_username
+    user_in_db = False
     print(
         str("================The Data recieved from user joined is: " +
-            Joined_User))
+            joined_user))
 
-    Check_UserinDB = models.Person.query.all()
-    for user_names in Check_UserinDB:
-        if Check_UserName == user_names.username:
-            UserInDB = True
+    check_userindb = models.Person.query.all()
+    for user_names in check_userindb:
+        if check_username == user_names.username:
+            user_in_db = True
         else:
             continue
 
-    if UserInDB == False:
-        Store_New_User = models.Person(username=Joined_User, score=100)
-        db.session.add(Store_New_User)
-        db.session.commit()
+    if user_in_db:
+        store_new_user = models.Person(username=joined_user, score=100)
+        DB.session.add(store_new_user)
+        DB.session.commit()
 
-    Initial_User_DB = []
-    Initial_Score_DB = []
+    initial_user_db = []
+    initial_score_db = []
 
-    Added_New_User = db.session.query(models.Person).order_by(
+    added_new_user = DB.session.query(models.Person).order_by(
         models.Person.score.desc()).all()
-    for Updated_DB_Users in Added_New_User:
-        print(Updated_DB_Users.username + " => " + str(Updated_DB_Users.score))
-        Initial_User_DB.append(Updated_DB_Users.username)
-        Initial_Score_DB.append(Updated_DB_Users.score)
+    for updated_db_users in added_new_user:
+        print(updated_db_users.username + " => " + str(updated_db_users.score))
+        initial_user_db.append(updated_db_users.username)
+        initial_score_db.append(updated_db_users.score)
 
-    socketio.emit('Old_DB_Users', Initial_User_DB)
-    socketio.emit('Old_DB_Scores', Initial_Score_DB)
+    SOCKETIO.emit('Old_DB_Users', initial_user_db)
+    SOCKETIO.emit('Old_DB_Scores', initial_score_db)
 
 
-@socketio.on('Game_Result_Winner')
-def Game_Result_Winner(data):
+@SOCKETIO.on('Game_Result_Winner')
+def game_result_winner(data):
+    '''This function updates the DB based on the winner or loser'''
     print(
         str("The Result of the game is: Winner:  " + data["Winner"] +
             ", Loser: " + data["Loser"]))
-    Winner_Name = data["Winner"]
-    Loser_Name = data["Loser"]
+    winner_name = data["Winner"]
+    loser_name = data["Loser"]
 
-    Update_Winner_score = db.session.query(
-        models.Person).filter_by(username=Winner_Name).first()
-    Update_Loser_score = db.session.query(
-        models.Person).filter_by(username=Loser_Name).first()
+    update_winner_score = DB.session.query(
+        models.Person).filter_by(username=winner_name).first()
+    update_loser_score = DB.session.query(
+        models.Person).filter_by(username=loser_name).first()
 
-    Update_Winner_score.score += 1
-    Update_Loser_score.score -= 1
+    update_winner_score.score += 1
+    update_loser_score.score -= 1
 
-    db.session.commit()
+    DB.session.commit()
 
-    Updated_User_DB = []
-    Updated_Score_DB = []
+    updated_user_db = []
+    updated_score_db = []
 
-    # All_People = models.Person.query.all()
-    All_People = db.session.query(models.Person).order_by(
+    # all_people = models.Person.query.all()
+    all_people = DB.session.query(models.Person).order_by(
         models.Person.score.desc()).all()
     print("*****************************************************")
-    for People in All_People:
-        print(People.username + " => " + str(People.score))
-        Updated_User_DB.append(People.username)
-        Updated_Score_DB.append(People.score)
+    for people in all_people:
+        print(people.username + " => " + str(people.score))
+        updated_user_db.append(people.username)
+        updated_score_db.append(people.score)
     print("*****************************************************")
 
-    socketio.emit('Updated_DB_Users', Updated_User_DB)
-    socketio.emit('Updated_DB_Scores', Updated_Score_DB)
+    SOCKETIO.emit('Updated_DB_Users', updated_user_db)
+    SOCKETIO.emit('Updated_DB_Scores', updated_score_db)
 
 
 # When a client emits the event 'chat' to the server, this function is run
 # 'chat' is a custom event name that we just decided
-@socketio.on('Board_Info')
+@SOCKETIO.on('Board_Info')
 def on_chat(data):  # data is whatever arg you pass in your emit call on client
     '''This function listens for updated board and lets other users know'''
     print(str(data))
     # This emits the 'chat' event from the server to all clients except for
     # the client that emmitted the event that triggered this function
-    socketio.emit('Board_Info', data, broadcast=True, include_self=False)
+    SOCKETIO.emit('Board_Info', data, broadcast=True, include_self=False)
 
 
-@socketio.on("Play_Again")
-def Create_NewGame(data):  # data is whatever arg you pass in your emit call on client
+@SOCKETIO.on("Play_Again")
+def create_newgame(
+        data):  # data is whatever arg you pass in your emit call on client
     '''This function listens for play_again and informs the connected users'''
     print(str(data))
     # This emits the 'chat' event from the server to all clients except for
     # the client that emmitted the event that triggered this function
-    socketio.emit('Play_Again', data, broadcast=True, include_self=False)
+    SOCKETIO.emit('Play_Again', data, broadcast=True, include_self=False)
 
 
-
-
-@socketio.on("Game_Over")
-def Game_Over(data):
+@SOCKETIO.on("Game_Over")
+def game_over(data):
     '''This function listens for game over'''
     print(str(data["Game_Over"]))
-    socketio.emit('Game_Over', data, broadcast=True, include_self=False)
+    SOCKETIO.emit('Game_Over', data, broadcast=True, include_self=False)
 
 
 if __name__ == "__main__":
-    # Note that we don't call app.run anymore. We call socketio.run with app arg
-    socketio.run(
-        app,
+    # Note that we don't call APP.run anymore. We call SOCKETIO.run with APP arg
+    SOCKETIO.run(
+        APP,
         host=os.getenv('IP', '0.0.0.0'),
         port=8081 if os.getenv('C9_PORT') else int(os.getenv('PORT', 8081)),
     )
