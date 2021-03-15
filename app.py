@@ -92,17 +92,17 @@ def curr_symbl(
 
 @SOCKETIO.on('DB_UserCheck')
 def user_db_check(check_username):
-    '''This function u'''
+    '''This function checks for user in database'''
     joined_user = check_username
-    user_in_db = False
+    user_in_db = True
     print(
         str("================The Data recieved from user joined is: " +
             joined_user))
 
     check_userindb = models.Person.query.all()
     for user_names in check_userindb:
-        if check_username == user_names.username:
-            user_in_db = True
+        if check_username != user_names.username:
+            user_in_db = False
         else:
             continue
 

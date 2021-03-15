@@ -1,3 +1,4 @@
+/* eslint-disable */ 
 import React from "react";
 import { Box_Comp } from "./Square.js";
 import logo from "./logo.svg";
