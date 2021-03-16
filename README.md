@@ -76,7 +76,32 @@ The repository below has the code to build a basic real time networking multipla
             - `SELECT * FROM person;`
 
 ## Unit Testing:
-    ## pylint: 
+    Mocking: Refer to the test folder which has the mock folder within it in order to see how unit testing using MOCKING is done.
+    UnMocking:Refer to the test folder which has the unmock folder within it in order to see how unit testing using UNMOCKING is done.
+    Jest: Refer to the source folder which has the file app.test.js in order to see how unit testing using JEST is done.
+ 
+## Python and JavaScript Linting:
+    ## Python Linting:
+    Type the following command in your terminal to install pylint:
+        * `pip install pylint`
+    To perform linting on a specific file go into the directory it is located and type the following command:
+        * pylint filename.py
+        
+     ## JavaScript Linting:
+    Type the following command in your terminal to install eslint with airbnb standards:
+        * `npx install-peerdeps --dev eslint-config-airbnb`
+        * `eslint -init`
+            When given options use the arrow keys to select:
+                * "Check syntax, find problems, and enforce code style"
+                * "Javascript modules (import/export)"
+                * "React"
+                * "No"
+                * "Browser"
+                * "Use a popular style guide"
+                * "Airbnb"
+                * "Javascript"
+                * "Install dependencies with npm - yes"
+         * `npx eslint filename`
     
 ## Python and JavaScript Formatting:
     ## Python Formatting:
