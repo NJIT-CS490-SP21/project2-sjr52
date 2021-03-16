@@ -79,13 +79,13 @@
     * Jest: Refer to the source folder which has the file app.test.js in order to see how unit testing using JEST is done.
  
 ## Python and JavaScript Linting:
-    ### Python Linting:
+  ### Python Linting:
     * Type the following command in your terminal to install pylint:
         * `pip install pylint`
     * To perform linting on a specific file go into the directory it is located and type the following command:
         * pylint filename.py
         
-     ### JavaScript Linting:
+   ### JavaScript Linting:
     Type the following command in your terminal to install eslint with airbnb standards:
         * `npx install-peerdeps --dev eslint-config-airbnb`
         * `eslint -init`
@@ -102,13 +102,13 @@
          * `npx eslint filename`
     
 ## Python and JavaScript Formatting:
-    ### Python Formatting:
+  ### Python Formatting:
     * Type the following command in your terminal to install YAPF:
         * `pip install yapf`
     * Now, we can format any python files by simply writing:      
         * `yapf -i {filename}` 
         
-    ### JavaScript Formatting:
+  ### JavaScript Formatting:
         * Type the following command in your terminal to install YAPF:
             * `npm install --save-dev --save-exact prettier`
             * `echo {}> .prettierrc.json`
