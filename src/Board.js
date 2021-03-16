@@ -262,19 +262,19 @@ export function Board(props) {
     if (i == 0) {
       Playing_Players.push(
         <ul>
-          <li id="Player_X_Style"> Player -> X : {username[i]}</li>
+          <li id="Player_X_Style"> Player - X : {username[i]}</li>
         </ul>
       );
     } else if (i == 1) {
       Playing_Players.push(
         <ul>
-          <li id="Player_O_Style"> Player -> O : {username[i]}</li>
+          <li id="Player_O_Style"> Player - O : {username[i]}</li>
         </ul>
       );
     } else {
       Spectator_Players.push(
         <ul>
-          <li id="Spectator_Style">Spectator -> : {username[i]}</li>
+          <li id="Spectator_Style">Spectator - : {username[i]}</li>
         </ul>
       );
     }

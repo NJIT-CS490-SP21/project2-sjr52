@@ -1,7 +1,5 @@
 # pylint: disable= E1101, C0413, R0903, W0603, W1508
 
-
-
 '''This file is a server that helps with the communication between multiple users and database'''
 import os
 from dotenv import load_dotenv, find_dotenv
@@ -46,17 +44,10 @@ def index(filename):
 def update_user_list(data):
     '''This function updates the user list based on players that join'''
     global CURRENT_PLAYERS
-    print(
-        "The Data Recieved is ================================================:"
-        + str(data))
+    print("The Data Recieved is:"+ str(data))
     CURRENT_PLAYERS.append(data['User_Name'])
-    print(
-        "CURRENT_PLAYERS list ================================================:"
-        + str(CURRENT_PLAYERS))
-    SOCKETIO.emit('User_List_Update',
-                  CURRENT_PLAYERS,
-                  broadcast=True,
-                  include_self=False)
+    print("CURRENT_PLAYERS list:"+ str(CURRENT_PLAYERS))
+    SOCKETIO.emit('User_List_Update', CURRENT_PLAYERS, broadcast=True,include_self=False)
 
 
 @SOCKETIO.on('connect')
@@ -94,6 +85,9 @@ def curr_symbl(
 def user_db_check(check_username):
     '''This function checks for user in database'''
     joined_user = check_username
+    
+    #add_user(joined_user)  #Changed HERE************  
+    
     user_in_db = True
     print(
         str("================The Data recieved from user joined is: " +
@@ -187,6 +181,20 @@ def game_over(data):
     '''This function listens for game over'''
     print(str(data["Game_Over"]))
     SOCKETIO.emit('Game_Over', data, broadcast=True, include_self=False)
+
+def Set_Score_NewUser(username):
+    new_user = models.Person(username=username, score=100)
+    DB.session.add(new_user)
+    DB.session.commit()
+    all_people = models.Person.query.all()
+    user_info = {}
+    for person in all_people:
+        user_info[person.username] = 100
+    return user_info
+
+
+
+
 
 
 if __name__ == "__main__":
