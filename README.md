@@ -75,6 +75,35 @@ The repository below has the code to build a basic real time networking multipla
         - Now lets use SQL query to display the stored data:
             - `SELECT * FROM person;`
 
+## Unit Testing:
+    ## pylint: 
+    
+## Python and JavaScript Formatting:
+    ## Python Formatting:
+    Type the following command in your terminal to install YAPF:
+        * `pip install yapf`
+    Now, we can format any python files by simply writing:      
+        * `yapf -i {filename}` 
+        
+    ## JavaScript Formatting:
+        Type the following command in your terminal to install YAPF:
+            * `npm install --save-dev --save-exact prettier`
+            * `echo {}> .prettierrc.json`
+         Now, Lets create a .prettierignore file to inform prettier which files not to format:
+            * touch .prettierignore
+            * c9 .prettierignore
+            - In side the file type the files you would like not to be formated:
+                ex.  
+                      Ignore artifacts:
+                      build
+                      coverage
+    
+            To use prettier type the following command:
+               * `npx prettier --write .` - This will apply the prettier format to all your js files.
+             
+             We can also check if the prettier format was applied by doing:
+                * `prettier --check .` - This will list the files with prettier formatting applied.
+                
 ## Unsolved Problems:
 
     - Problem.) One of the problems which I have discovered and that still exist is that whenever I try to open the app using the heroku url on multiple devices and login in, the first player(x) is overwritten by the new user that has just logged in. When in the correct manner the user should be added after the existing player and being placed as the player with marker "O" or just a spectator.
