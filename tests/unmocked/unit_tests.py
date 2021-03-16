@@ -16,17 +16,17 @@ class SplitTestCase(unittest.TestCase):
     def setUp(self):
         self.success_test_params_one = [{
             KEY_INPUT:
-            "Abhi SR AR",
-            KEY_EXPECTED: ["Sunny", "Abhi", "SR", 'AR'],
+            "Sunny Abhi",
+            KEY_EXPECTED: ["Sunny", "Abhi"],
         }]
         self.success_test_params_two = [{
             KEY_INPUT:
-            "Abhi SR AR",
-            KEY_EXPECTED: ["Sunny", "Abhi", "SR", 'AR'],
+            "Sunny Abhi SR",
+            KEY_EXPECTED: ["Sunny", "Abhi", "SR"],
         }]
         self.success_test_params_three = [{
             KEY_INPUT:
-            "Abhi SR AR",
+            "Sunny Abhi SR AR",
             KEY_EXPECTED: ["Sunny", "Abhi", "SR", 'AR'],
         }]
 
@@ -34,24 +34,30 @@ class SplitTestCase(unittest.TestCase):
         '''This function is used to split string and replicates the way it was done in app.py'''
         for test in self.success_test_params_one:
             actual_result = test[KEY_INPUT].split()
+            print(actual_result)
             expected_result = test[KEY_EXPECTED]
+            print(expected_result)
 
-            self.assertEqual(actual_result[0], expected_result[1])
-            self.assertEqual(len(actual_result[0]), len(expected_result[1]))
+            self.assertEqual(actual_result[1], expected_result[1])
+            self.assertEqual(len(actual_result[1]), len(expected_result[1]))
 
         for test in self.success_test_params_two:
             actual_result = test[KEY_INPUT].split()
+            print(actual_result)
             expected_result = test[KEY_EXPECTED]
+            print(expected_result)
 
-            self.assertEqual(actual_result[1], expected_result[2])
-            self.assertEqual(len(actual_result[1]), len(expected_result[2]))
+            self.assertEqual(actual_result[2], expected_result[2])
+            self.assertEqual(len(actual_result[2]), len(expected_result[2]))
 
         for test in self.success_test_params_three:
             actual_result = test[KEY_INPUT].split()
+            print(actual_result)
             expected_result = test[KEY_EXPECTED]
+            print(expected_result)
 
-            self.assertEqual(actual_result[2], expected_result[3])
-            self.assertEqual(len(actual_result[2]), len(expected_result[3]))
+            self.assertEqual(actual_result[3], expected_result[3])
+            self.assertEqual(len(actual_result[3]), len(expected_result[3]))
 
 
 class ScoreCheck(unittest.TestCase):
@@ -99,8 +105,11 @@ class ScoreCheck(unittest.TestCase):
         '''This function checks if the result obtained matches the format shown above'''
         for test in self.success_test_params_user_score_one:
             actual_result = test[KEY_INPUT]
+            print(actual_result)
             expected_result1 = test[KEY_EXPECTED1]
+            print(expected_result1)
             expected_result2 = test[KEY_EXPECTED2]
+            print(expected_result2)
 
             self.assertEqual(
                 list(actual_result.keys())[0], expected_result1[0])
@@ -109,8 +118,11 @@ class ScoreCheck(unittest.TestCase):
 
         for test in self.success_test_params_user_score_two:
             actual_result = test[KEY_INPUT]
+            print(actual_result)
             expected_result1 = test[KEY_EXPECTED1]
+            print(expected_result1)
             expected_result2 = test[KEY_EXPECTED2]
+            print(expected_result2)
 
             self.assertEqual(
                 list(actual_result.keys())[1], expected_result1[1])
@@ -119,8 +131,11 @@ class ScoreCheck(unittest.TestCase):
 
         for test in self.success_test_params_user_score_three:
             actual_result = test[KEY_INPUT]
+            print(actual_result)
             expected_result1 = test[KEY_EXPECTED1]
+            print(expected_result1)
             expected_result2 = test[KEY_EXPECTED2]
+            print(expected_result2)
 
             self.assertEqual(
                 list(actual_result.keys())[2], expected_result1[2])
@@ -129,8 +144,11 @@ class ScoreCheck(unittest.TestCase):
 
         for test in self.success_test_params_user_score_four:
             actual_result = test[KEY_INPUT]
+            print(actual_result)
             expected_result1 = test[KEY_EXPECTED1]
+            print(expected_result1)
             expected_result2 = test[KEY_EXPECTED2]
+            print(expected_result2)
 
             self.assertEqual(
                 list(actual_result.keys())[3], expected_result1[3])
