@@ -65,7 +65,7 @@
        * >> `db.session.commit()`
 
     8.) In order to see if the information was stored correctly do:
-       * >> `models.Person.query.all()`, this will show you the users that are stored in the db.
+        * >> `models.Person.query.all()`, this will show you the users that are stored in the db.
 
     9.) To check if the following was written in our Heroku Database which is lined with the app:
         * type `heroku pg:psql` in the terminal
