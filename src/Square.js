@@ -8,7 +8,7 @@ import io from "socket.io-client";
 
 export function Box_Comp(props) {
   return (
-    <div class="box" onClick={() => props.Listen_Click(props.box_index)}>
+    <div className="box" onClick={() => props.Listen_Click(props.box_index)}>
       {props.box_value}
     </div>
   );

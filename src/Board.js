@@ -337,7 +337,7 @@ export function Board(props) {
           {IsLeaderBoard ? (
             <div id="Table_Wrapper">
               <table>
-                <caption>Leader Board</caption>
+                <caption>LeaderBoard</caption>
                 <thead>
                   <tr>
                     <th>UserName</th>
