@@ -47,8 +47,7 @@ def update_user_list(data):
     print("The Data Recieved is:"+ str(data))
     CURRENT_PLAYERS.append(data['User_Name'])
     print("CURRENT_PLAYERS list:"+ str(CURRENT_PLAYERS))
-    SOCKETIO.emit('User_List_Update', CURRENT_PLAYERS, broadcast=True,include_self=False)
-
+    SOCKETIO.emit('User_List_Update', CURRENT_PLAYERS, broadcast=True, include_self=False)
 
 @SOCKETIO.on('connect')
 def on_connect():
@@ -85,14 +84,8 @@ def curr_symbl(
 def user_db_check(check_username):
     '''This function checks for user in database'''
     joined_user = check_username
-    
-    #add_user(joined_user)  #Changed HERE************  
-    
     user_in_db = True
-    print(
-        str("================The Data recieved from user joined is: " +
-            joined_user))
-
+    print(str("================The Data recieved from user joined is: " + joined_user))
     check_userindb = models.Person.query.all()
     for user_names in check_userindb:
         if check_username != user_names.username:
@@ -181,7 +174,8 @@ def game_over(data):
     print(str(data["Game_Over"]))
     SOCKETIO.emit('Game_Over', data, broadcast=True, include_self=False)
 
-def Set_Score_NewUser(username):
+def set_score_newuser(username):
+    '''This function is used for setting new users in db (mock testing)'''
     new_user = models.Person(username=username, score=100)
     DB.session.add(new_user)
     DB.session.commit()
@@ -191,12 +185,12 @@ def Set_Score_NewUser(username):
         user_info[person.username] = 100
     return user_info
 
-def IsUserIN_DB(username):
-    if username =="Sunny":
+def isuser_in_db(username):
+    '''This function is created for checking usernames in db (mock testing)'''
+    if username == "Sunny":
         new_user = models.Person(username=username, score=100)
         DB.session.add(new_user)
         DB.session.commit()
-    
     all_people = models.Person.query.all()
     user_text = ""
     for person in all_people:
@@ -205,11 +199,6 @@ def IsUserIN_DB(username):
         else:
             user_text = "User Not Is In DB"
     return user_text
-    
-
-
-
-
 
 if __name__ == "__main__":
     # Note that we don't call APP.run anymore. We call SOCKETIO.run with APP arg

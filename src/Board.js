@@ -1,4 +1,4 @@
-/* eslint-disable */ 
+/* eslint-disable */
 import React from "react";
 import { App } from "./App.js";
 import { Box_Comp } from "./Square.js";
