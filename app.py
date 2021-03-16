@@ -154,7 +154,6 @@ def game_result_winner(data):
     SOCKETIO.emit('Updated_DB_Users', updated_user_db)
     SOCKETIO.emit('Updated_DB_Scores', updated_score_db)
 
-
 # When a client emits the event 'chat' to the server, this function is run
 # 'chat' is a custom event name that we just decided
 @SOCKETIO.on('Board_Info')
@@ -192,6 +191,21 @@ def Set_Score_NewUser(username):
         user_info[person.username] = 100
     return user_info
 
+def IsUserIN_DB(username):
+    if username =="Sunny":
+        new_user = models.Person(username=username, score=100)
+        DB.session.add(new_user)
+        DB.session.commit()
+    
+    all_people = models.Person.query.all()
+    user_text = ""
+    for person in all_people:
+        if person.username == username:
+            user_text = "User Is In DB"
+        else:
+            user_text = "User Not Is In DB"
+    return user_text
+    
 
 
 

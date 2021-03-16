@@ -51,9 +51,68 @@ class AddUserTestCase(unittest.TestCase):
                         mocked_query.all = self.mocked_person_query_all
                          
                         actual_result = Set_Score_NewUser(test[KEY_INPUT])
+                        print(actual_result)
                         expected_result = test[KEY_EXPECTED]
+                        print(expected_result)
                         self.assertEqual(actual_result, expected_result)
                         self.assertEqual(len(actual_result),len(expected_result))
+                        
+                        
+                        
+                        
+class UserDB_Checker(unittest.TestCase):
+    def setUp(self):
+        self.success_test_params = [
+            {
+                KEY_INPUT:'Abhi',
+                KEY_EXPECTED:'User Not Is In DB',
+            },
+            {
+                KEY_INPUT:'Brij',
+                KEY_EXPECTED: 'User Not Is In DB',
+            },   
+            {
+                KEY_INPUT:'Dipm',
+                KEY_EXPECTED: 'User Not Is In DB',
+            },
+            {
+                KEY_INPUT:'Sunny',
+                KEY_EXPECTED: 'User Is In DB',
+            }
+            
+        ]
+        
+        initial_person = models.Person(username='Sunny', score=100)
+        self.initial_db_mock = [initial_person]
+        
+        
+    def mocked_db_session_add(self, username):
+        self.initial_db_mock.append(username)
+        
+        
+    def mocked_db_session_commit(self):
+        pass  
+    
+
+    def mocked_person_query_all(self):
+        return self.initial_db_mock
+        
+    def User_Check(self):
+        for test in self.success_test_params:
+            with patch('app.DB.session.add', self.mocked_db_session_add):
+                with patch('app.DB.session.commit', self.mocked_db_session_commit):
+                    with patch('models.Person.query') as mocked_query:
+                        mocked_query.all = self.mocked_person_query_all
+                         
+                        actual_result = IsUserIN_DB(test[KEY_INPUT])
+                        print("Actual Result: " + actual_result)
+                        expected_result = test[KEY_EXPECTED]
+                        print("Expected Result: " + expected_result)
+                        self.assertEqual(actual_result, expected_result)
+                        self.assertEqual(len(actual_result),len(expected_result))
+                        
+
+
                         
 if __name__ == '__main__':
     unittest.main()
