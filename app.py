@@ -84,16 +84,16 @@ def curr_symbl(
 def user_db_check(check_username):
     '''This function checks for user in database'''
     joined_user = check_username
-    user_in_db = True
+    user_in_db = 'Yes'
     print(str("================The Data recieved from user joined is: " + joined_user))
     check_userindb = models.Person.query.all()
     for user_names in check_userindb:
         if check_username != user_names.username:
-            user_in_db = False
+            user_in_db = 'No'
         else:
             continue
 
-    if user_in_db:
+    if user_in_db == 'No':
         store_new_user = models.Person(username=joined_user, score=100)
         DB.session.add(store_new_user)
         DB.session.commit()
